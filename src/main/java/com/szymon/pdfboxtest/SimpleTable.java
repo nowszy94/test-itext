@@ -28,14 +28,29 @@ public class SimpleTable {
         PdfWriter.getInstance(document, new FileOutputStream(dest));
         document.open();
 
-        PdfPTable table = new PdfPTable(3);
+
+        PdfPTable table = new PdfPTable(3){
+            @Override
+            public void completeRow() {
+                while (!rowCompleted) {
+                    addCell(getDefaultCell());
+                }
+            }
+
+            @Override
+            public PdfPCell getDefaultCell() {
+                PdfPCell defaultCell = super.getDefaultCell();
+                defaultCell.setBorder(Rectangle.NO_BORDER);
+                return defaultCell;
+            }
+        };
         table.setWidthPercentage(100f);
 
-        for (int aw = 0; aw < 9; aw++) {
+        for (int aw = 0; aw < 8; aw++) {
             PdfPCell pdfPCell = new PdfPCell();
             pdfPCell.setFixedHeight(260);
             pdfPCell.setPadding(20f);
-            Image image = Image.getInstance("C:\\inzynierka\\pdfboxtest\\1.png");
+            Image image = Image.getInstance("1.png");
             image.setAlignment(Element.ALIGN_CENTER);
             pdfPCell.addElement(image);
             Paragraph paragraph = new Paragraph("dupa du asdf sadf asdfas dfasfdioajo fijwofdi jasodifpa");
@@ -49,6 +64,8 @@ public class SimpleTable {
             pdfPCell.setBorder(Rectangle.NO_BORDER);
             table.addCell(pdfPCell);
         }
+        table.completeRow();
+
         Paragraph paragraph = new Paragraph("Bicie w przelocie - 21.03.2019");
         paragraph.setAlignment(Element.ALIGN_CENTER);
         document.add(paragraph);
